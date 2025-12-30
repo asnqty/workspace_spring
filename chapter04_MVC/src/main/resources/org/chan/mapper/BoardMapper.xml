@@ -4,8 +4,21 @@
 
 <mapper namespace="org.chan.mapper.BoardMapper">
 	<!-- 전체 데이터 가져오기 -->
-	<select id="getList" resultType="org.chan.domain.BoardVO">
-		SELECT * FROM tbl_board
+	<select id="getList" parameterType="org.chan.domain.Criteria" resultType="org.chan.domain.BoardVO">
+		<![CDATA[
+			SELECT bno, writer, title, regdate
+			FROM
+				(SELECT ROWNUM rn, a.*
+				FROM
+					(SELECT bno, writer, title, regdate FROM tbl_board ORDER BY bno DESC) a
+				WHERE ROWNUM <= #{pageNum} * #{amount})
+			WHERE rn > (#{pageNum}-1) * #{amount}
+		]]>
+	</select>
+	
+	<!-- 전체 게시글 수 가져오기 -->
+	<select id="getTotal" resultType="int">
+		SELECT COUNT(bno) FROM tbl_board	
 	</select>
 	
 	<!-- 데이터 삽입 -->

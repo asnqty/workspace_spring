@@ -29,7 +29,7 @@ document.querySelectorAll("button").forEach(btn =>{
     
     // 목록으로 이동 버튼
     else if(type === 'indexBtn'){
-      location.href = '/board/list';
+    	moveIndex();
     }
   })
 });

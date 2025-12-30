@@ -3,6 +3,7 @@ package org.chan.service;
 import java.util.List;
 
 import org.chan.domain.BoardVO;
+import org.chan.domain.Criteria;
 import org.chan.mapper.BoardMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,15 @@ public class BoardServiceImpl implements BoardService{
 	private BoardMapper mapper;
 	
 	@Override
-	public List<BoardVO> getList() {
+	public List<BoardVO> getList(Criteria cri) {
 		log.info("getList...");
-		return mapper.getList();
+		return mapper.getList(cri);
+	}
+	
+	@Override
+	public int getTotal() {
+		log.info("getTotal...");
+		return mapper.getTotal();
 	}
 	
 	@Override

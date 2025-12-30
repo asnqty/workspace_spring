@@ -29,7 +29,7 @@ document.querySelectorAll("button").forEach(btn =>{
     
  // 목록으로 이동 버튼
     else if(type === 'indexBtn'){
-      location.href = '/board/list';
+    	moveIndex();
     }
     
   })
@@ -54,6 +54,11 @@ function modify() {
 // 게시글 삭제
 function remove(){
 	if(confirm("글을 삭제하시겠습니까?")){
+		// 게시글을 삭제할 때는 form에서 bno만 필요하기에 나머지를 지우고 bno를 추가하는 과정
+		const bnoEle = f.bno;	// bno를 담고 있는 input 태그
+		f.innerHTML = '';		// form 태그 내부 비우기
+		f.appendChild(bnoEle);	// form 태그 내부에 bno 추가
+		
 		f.action = '/board/remove';
 		f.submit();
 	}

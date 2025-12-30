@@ -1,6 +1,8 @@
 package org.chan.controller;
 
 import org.chan.domain.BoardVO;
+import org.chan.domain.Criteria;
+import org.chan.domain.PageDTO;
 import org.chan.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,9 +25,25 @@ public class BoardController {
 	
 	// 전체 데이터 조회
 	@GetMapping("/list")
-	public void list(Model model) {
-		log.info("list...");
-		model.addAttribute("list", service.getList());
+	public void list(Criteria cri, Model model) {
+		log.info("list..." + cri);
+		
+		// jsp에선 pageNum과 amount를 파라미터로 보냈기에 항상 String 타입이였음
+		// 따라서 값을 받았는지 확인하기 위해 null과 비교했음
+		// spring에서는 Criteria 객체를 받기에 해당 객체의 필드가 int 타입이라 기초값인 0과 비교를 함
+		if(cri.getPageNum() == 0 || cri.getAmount() == 0) {
+			// pageNum과 amount를 받지 못했기에 기본값으로 초기화를 직접 해줌
+			cri.setPageNum(1);
+			cri.setAmount(10);
+		}
+		
+		// 해당 페이지에 보여줄 데이터
+		model.addAttribute("list", service.getList(cri));
+		
+		// 전체 게시글 수
+		int total = service.getTotal();
+		log.info("total..." + total);
+		model.addAttribute("pageMaker", new PageDTO(cri, total));
 	}
 	
 	// 게시글 등록 화면 이동

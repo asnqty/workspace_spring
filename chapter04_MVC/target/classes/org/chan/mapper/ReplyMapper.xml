@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.chan.mapper.ReplyMapper">
+
+	<!-- 댓글 삽입 -->
+	<insert id="insert" parameterType="org.chan.domain.ReplyVO">
+		INSERT INTO tbl_reply VALUES (seq_reply.nextval, #{bno}, #{reply}, #{replyer}, sysdate, sysdate)
+	</insert>
+	
+	<!-- 댓글 목록은 내림차순으로 조회 -->
+	<select id="getList" resultType="org.chan.domain.ReplyVO">
+		SELECT * FROM tbl_reply ORDER BY rno DESC
+	</select>
+	
+	<!-- 댓글 읽기 -->
+	<select id="read" parameterType="int" resultType="org.chan.domain.ReplyVO">
+		SELECT * FROM tbl_reply WHERE rno=#{rno}
+	</select>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="delete" parameterType="int">
+		DELETE FROM tbl_reply WHERE rno=#{rno}
+	</delete>
+	
+	<!-- 댓글 수정은 댓글 내용, 수정 날짜 변경 조건은 댓글 번호 -->
+	<update id="update" parameterType="org.chan.domain.ReplyVO">
+		UPDATE tbl_reply SET reply=#{reply}, updateDate=sysdate WHERE rno=#{rno}
+	</update>
+</mapper>

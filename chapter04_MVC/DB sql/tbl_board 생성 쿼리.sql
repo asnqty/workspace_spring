@@ -14,3 +14,5 @@ add constraint pk_board
 primary key(bno);
 
 commit;
+
+select * from 

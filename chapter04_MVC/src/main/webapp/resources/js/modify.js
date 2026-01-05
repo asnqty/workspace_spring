@@ -47,6 +47,21 @@ function modify() {
 		return;
 	}
 	
+	// 이미 있으면 재사용, 없으면 생성
+	let pageInput = f.querySelector("input[name='pageNum']");
+
+	if (!pageInput) {
+	  pageInput = document.createElement("input");
+	  pageInput.type = "hidden";
+	  pageInput.name = "pageNum";
+	  f.appendChild(pageInput);
+	}
+	
+	const storageData = getStorageData();
+	
+	// 값 세팅
+	pageInput.value = storageData.pageNum;
+	
 	f.action = '/board/modify';
 	f.submit();
 }
@@ -58,6 +73,21 @@ function remove(){
 		const bnoEle = f.bno;	// bno를 담고 있는 input 태그
 		f.innerHTML = '';		// form 태그 내부 비우기
 		f.appendChild(bnoEle);	// form 태그 내부에 bno 추가
+		
+		// 이미 있으면 재사용, 없으면 생성
+		let pageInput = f.querySelector("input[name='pageNum']");
+
+		if (!pageInput) {
+		  pageInput = document.createElement("input");
+		  pageInput.type = "hidden";
+		  pageInput.name = "pageNum";
+		  f.appendChild(pageInput);
+		}
+		
+		const storageData = getStorageData();
+		
+		// 값 세팅
+		pageInput.value = storageData.pageNum;
 		
 		f.action = '/board/remove';
 		f.submit();

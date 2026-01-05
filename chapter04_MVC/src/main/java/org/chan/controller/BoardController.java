@@ -82,18 +82,23 @@ public class BoardController {
 		
 	// 게시글 수정
 	@PostMapping("/modify")
-	public String modify(BoardVO bvo, RedirectAttributes rttr) {
+	public String modify(BoardVO bvo, RedirectAttributes rttr, @RequestParam("pageNum") int pageNum) {
 		log.info("modify..." + bvo);
+		log.info("pageNum... : " + pageNum);
 		boolean result = service.modify(bvo);
 		rttr.addFlashAttribute("result", result ? "success" : "fail");
+		rttr.addAttribute("pageNum", pageNum);
+	    rttr.addAttribute("amount", 10);
 		return "redirect:/board/list";
 	}
 	
 	// 게시글 삭제
 	@PostMapping("/remove")
-	public String remove(@RequestParam("bno") int bno, RedirectAttributes rttr) {
+	public String remove(@RequestParam("bno") int bno, RedirectAttributes rttr, @RequestParam("pageNum") int pageNum) {
 		log.info("remove..." + bno);
 		rttr.addFlashAttribute("result", service.remove(bno) ? "success" : "fail");
+		rttr.addAttribute("pageNum", pageNum);
+	    rttr.addAttribute("amount", 10);
 		return "redirect:/board/list";
 	}
 }

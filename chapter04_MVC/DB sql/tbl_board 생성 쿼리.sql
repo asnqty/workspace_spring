@@ -15,4 +15,4 @@ primary key(bno);
 
 commit;
 
-select * from 
+select * from tbl_reply;

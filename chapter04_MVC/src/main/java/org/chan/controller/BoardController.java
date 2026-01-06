@@ -82,13 +82,14 @@ public class BoardController {
 		
 	// 게시글 수정
 	@PostMapping("/modify")
-	public String modify(BoardVO bvo, RedirectAttributes rttr, @RequestParam("pageNum") int pageNum) {
+	public String modify(BoardVO bvo, RedirectAttributes rttr, @RequestParam("pageNum") int pageNum, 
+			@RequestParam("amount") int amount) {
 		log.info("modify..." + bvo);
 		log.info("pageNum... : " + pageNum);
-		boolean result = service.modify(bvo);
-		rttr.addFlashAttribute("result", result ? "success" : "fail");
+		log.info("amount... : " + amount);
+		rttr.addFlashAttribute("result", service.modify(bvo) ? "success" : "fail");
 		rttr.addAttribute("pageNum", pageNum);
-	    rttr.addAttribute("amount", 10);
+	    rttr.addAttribute("amount", amount);
 		return "redirect:/board/list";
 	}
 	

@@ -12,7 +12,7 @@ document.head.appendChild(linkEle);
 // form 받아오기
 const f = document.forms[0];
 
-//버튼 클릭 이벤트 부여
+// 버튼 클릭 이벤트 부여
 document.querySelectorAll("button").forEach(btn =>{
   btn.addEventListener('click', ()=>{
     let type = btn.id;
@@ -47,20 +47,35 @@ function modify() {
 		return;
 	}
 	
+	// pageNum을 스토리지에서 꺼내서 폼에 담아 같이 전송
 	// 이미 있으면 재사용, 없으면 생성
-	let pageInput = f.querySelector("input[name='pageNum']");
+	let pageNumInput = f.querySelector("input[name='pageNum']");
 
-	if (!pageInput) {
-	  pageInput = document.createElement("input");
-	  pageInput.type = "hidden";
-	  pageInput.name = "pageNum";
-	  f.appendChild(pageInput);
+	if (!pageNumInput) {
+		pageNumInput = document.createElement("input");
+		pageNumInput.type = "hidden";
+		pageNumInput.name = "pageNum";
+		f.appendChild(pageNumInput);
 	}
 	
 	const storageData = getStorageData();
 	
 	// 값 세팅
-	pageInput.value = storageData.pageNum;
+	pageNumInput.value = storageData.pageNum;
+	
+	// amount 스토리지에서 꺼내서 폼에 담아 같이 전송
+	// 이미 있으면 재사용, 없으면 생성
+	let amountInput = f.querySelector("input[name='amount']");
+
+	if (!amountInput) {
+		amountInput = document.createElement("input");
+		amountInput.type = "hidden";
+		amountInput.name = "amount";
+		f.appendChild(amountInput);
+	}
+	
+	// 값 세팅
+	amountInput.value = storageData.amount;
 	
 	f.action = '/board/modify';
 	f.submit();

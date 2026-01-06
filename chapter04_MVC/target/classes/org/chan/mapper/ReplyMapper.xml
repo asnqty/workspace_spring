@@ -11,7 +11,7 @@
 	
 	<!-- 댓글 목록은 내림차순으로 조회 -->
 	<select id="getList" resultType="org.chan.domain.ReplyVO">
-		SELECT * FROM tbl_reply ORDER BY rno DESC
+		SELECT * FROM tbl_reply WHERE bno=#{bno} ORDER BY rno DESC
 	</select>
 	
 	<!-- 댓글 읽기 -->

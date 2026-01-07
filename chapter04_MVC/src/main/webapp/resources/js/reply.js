@@ -33,8 +33,8 @@ const replyService = (function(){
 	}
 	
 	// 댓글 삭제
-	function remove(rno, callback){
-		fetch('/reply/' + rno, {method : 'delete'})
+	function remove(rno, bno, callback){
+		fetch('/reply/' + rno + '/' + bno, {method : 'delete'})
 		.then(response => response.text())
 		.then(data =>{callback(data)})
 		.catch(err => console.log(err));

@@ -240,7 +240,7 @@ function modifyReply(){
 // 댓글 수정 창에서 댓글 삭제
 function removeReply(){
 	if(confirm("댓글을 삭제하시겠습니까?")){
-		rs.remove(rno, function(result){
+		rs.remove(rno,f.bno.value, function(result){
 			console.log(result);
 			closeModal();
 			showList();

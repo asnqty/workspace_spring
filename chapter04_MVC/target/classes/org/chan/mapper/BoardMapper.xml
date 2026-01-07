@@ -6,11 +6,11 @@
 	<!-- 전체 데이터 가져오기 -->
 	<select id="getList" parameterType="org.chan.domain.Criteria" resultType="org.chan.domain.BoardVO">
 		<![CDATA[
-			SELECT bno, writer, title, regdate
+			SELECT bno, writer, title, regdate, replycnt
 			FROM
 				(SELECT ROWNUM rn, a.*
 				FROM
-					(SELECT bno, writer, title, regdate FROM tbl_board ORDER BY bno DESC) a
+					(SELECT bno, writer, title, regdate, replycnt FROM tbl_board ORDER BY bno DESC) a
 				WHERE ROWNUM <= #{pageNum} * #{amount})
 			WHERE rn > (#{pageNum}-1) * #{amount}
 		]]>
@@ -40,5 +40,10 @@
 	<update id="update" parameterType="org.chan.domain.BoardVO">
 		UPDATE tbl_board SET title=#{title}, content=#{content}, writer=#{writer}, 
 		updatedate=sysdate WHERE bno=#{bno}
+	</update>
+	
+	<!-- 게시글에 달린 댓글의 갯수에 변화가 있을 때 replycnt를 변경 -->
+	<update id="updateReplyCnt">
+		UPDATE tbl_board SET replycnt = replycnt + #{amount} WHERE bno=#{bno}
 	</update>
 </mapper>

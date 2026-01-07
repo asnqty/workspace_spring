@@ -15,4 +15,13 @@ primary key(bno);
 
 commit;
 
+select * from tbl_board;
+
 select * from tbl_reply;
+
+-- tbl_board 테이블 수정
+alter table tbl_board add (replycnt number default 0);
+
+-- 기존의 댓글이 존재했다면, replycnt에 반영
+update tbl_board set replycnt = (select count(rno) from tbl_reply where tbl_reply.bno = tbl_board.bno) where bno = 1;
+

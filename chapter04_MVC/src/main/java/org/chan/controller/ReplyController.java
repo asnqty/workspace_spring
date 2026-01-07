@@ -50,10 +50,10 @@ public class ReplyController {
 	}
 	
 	// 3. 삭제
-	@DeleteMapping(value = "/{rno}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> remove(@PathVariable("rno") int rno) {
+	@DeleteMapping(value = "/{rno}/{bno}", produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<String> remove(@PathVariable("rno") int rno, @PathVariable("bno") int bno) {
 		log.info("remove : " + rno);
-		return service.remove(rno) ? new ResponseEntity<String>("success", HttpStatus.OK) :
+		return service.remove(rno, bno) ? new ResponseEntity<String>("success", HttpStatus.OK) :
 			new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	

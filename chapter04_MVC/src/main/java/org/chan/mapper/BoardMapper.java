@@ -2,6 +2,7 @@ package org.chan.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.chan.domain.BoardVO;
 import org.chan.domain.Criteria;
 
@@ -23,4 +24,8 @@ public interface BoardMapper {
 	
 	// 데이터 수정 update -- 기본키 조건 / 제목, 내용, 작성자, 수정 날짜 변경
 	public int update(BoardVO bvo);
+	
+	// 댓글 데이터 변경
+	// @Param 어노테이션을 이용해 한번에 DTO를 따로 만들지 않고 한번에 여러 데이터를 던져줄 수 있음
+	public void updateReplyCnt(@Param("bno") int bno, @Param("amount") int amount);
 }

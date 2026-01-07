@@ -16,7 +16,7 @@ public interface ReplyService {
 	public ReplyVO get(int rno);
 	
 	// 댓글 삭제
-	public boolean remove(int rno);
+	public boolean remove(int rno, int bno);
 	
 	// 댓글 수정
 	public boolean modify(ReplyVO rvo);

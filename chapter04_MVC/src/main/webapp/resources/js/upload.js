@@ -1,0 +1,90 @@
+console.log('upload.js 실행...');
+
+// 파일 업로드 전처리 과정 내용들 (검증)
+const regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+const MAX_SIZE = 5242880; // 5MB
+
+function checkExtension(fileName, fileSize){
+	if(fileSize >= MAX_SIZE){
+		alert("파일 사이즈 초과");
+		return;
+	}
+	if(regex.test(fileName)){
+		alert("해당 종류의 파일은 업로드할 수 없습니다.");
+		return;
+	}
+	return true;
+}
+
+// 파일을 비동기로 업로드 후 선택한 파일이 없는 상태로 초기화 하기 위한 과정
+// 비어있는 요소 복사해두기
+let uploadDiv = document.querySelector(".uploadDiv");
+// 하위 노드까지 복사
+let cloneObj = uploadDiv.firstElementChild.cloneNode(true);
+
+// 실제 파일 업로드
+document.querySelector('input[type="file"]').addEventListener('change', ()=>{
+	const inputFile = document.querySelector('input[type="file"]');
+	const files = inputFile.files;
+	const formData = new FormData();
+	
+	for(let i=0; i<files.length; i++){
+		
+		if(!checkExtension(files[i].name, files[i].size)){
+			return false;
+		}
+		
+		formData.append('uploadFile', files[i]);
+	}
+	
+	fetch(`/uploadAsyncAction`, {method : 'post', body : formData})
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+			
+			inputFile.value = '';
+			showUploadFile(data);
+		})
+		.catch(err => console.log(err));
+});
+
+// 업로드 완료된 목록 보여주는 함수
+let uploadResult = document.querySelector('.uploadResult ul');
+function showUploadFile(uploadResultArr){
+	let str = ``;
+	uploadResultArr.forEach(file =>{
+		let fileCallPath = encodeURIComponent(file.uploadPath + "/" + file.uuid + "_" + file.fileName);
+		
+		str += `<li path="${file.uploadPath}" uuid="${file.uuid}" fileName="${file.fileName}">`;
+//		str += `<a href="/download?fileName=${fileCallPath}">`;
+		str += `${file.fileName}`;
+//		str += `</a>`;
+		str += `<span data-file="${fileCallPath}"> X </span>`;
+		str += `</li>`;
+	});
+	uploadResult.innerHTML = str;
+	spanAddEvent();
+}
+
+// 이런 방식으로 ul 태그에 이벤트를 부여, e.target.tagName으로 자식의 tagName을 버블링해서 가져올 수 있음
+//uploadResult.addEventListener('click', e=>{
+//	
+//	if(e.target.tagName === "SPAN"){
+//		let targetFile = e.target.getAttribute(`data-file`);
+//	}
+//	
+//})
+
+// 위에서 생성된 X에 클릭이벤트 부여
+// 클릭 시 '/deleteFile' 경로로 fetch
+// * method : post, body : data-file의 값 == fileCallPath
+// * headers : {'Content-Type' : 'text/plain'}
+// * api에서는 deleted 라는 문자열을 리턴할 예정
+function spanAddEvent(){
+	document.querySelector('.uploadResult ul li span').addEventListener('click', e=>{
+		fetch(`/deleteFile`, {method : 'post', body : e.target.dataset.file, headers : {'Content-Type' : 'text/plain'}})
+			.then(res => res.text())
+			.then(result => {e.target.closest('li').remove();})
+			.catch(err => console.error(err));
+	});
+};

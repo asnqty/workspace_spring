@@ -1,12 +1,17 @@
 package org.chan.service;
 
+import java.io.File;
 import java.util.List;
 
+import org.chan.domain.BoardAttachVO;
 import org.chan.domain.BoardVO;
 import org.chan.domain.Criteria;
+import org.chan.mapper.BoardAttachMapper;
 import org.chan.mapper.BoardMapper;
+import org.chan.mapper.ReplyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j;
 
@@ -16,6 +21,12 @@ public class BoardServiceImpl implements BoardService{
 	
 	@Autowired
 	private BoardMapper mapper;
+	
+	@Autowired
+	private ReplyMapper rmapper;
+	
+	@Autowired
+	private BoardAttachMapper attachmapper;
 	
 	@Override
 	public List<BoardVO> getList(Criteria cri) {
@@ -30,9 +41,23 @@ public class BoardServiceImpl implements BoardService{
 	}
 	
 	@Override
+	@Transactional
 	public void register(BoardVO bvo) {
 		log.info("register..." + bvo);
+		// 게시글 등록
 		mapper.insert(bvo);
+		
+		List<BoardAttachVO> list = bvo.getAttachList();
+		int bno = bvo.getBno();
+		
+		// 첨부 파일 등록
+		if(list != null && list.size() > 0) {
+			for(int i=0; i<list.size(); i++) {
+				BoardAttachVO attachvo = list.get(i);
+				attachvo.setBno(bno);
+				attachmapper.insert(attachvo);
+			}
+		}
 	}
 	
 	@Override
@@ -41,10 +66,34 @@ public class BoardServiceImpl implements BoardService{
 		return mapper.read(bno);
 	}
 	
+	@Transactional
 	@Override
 	public boolean remove(int bno) {
 		log.info("remove..." + bno);
-		return mapper.delete(bno) == 1;
+		int removeReplyCnt = rmapper.deleteAll(bno);
+		log.info("removeReplyCnt : " + removeReplyCnt);
+		List<BoardAttachVO> uuidList = attachmapper.findByBno(bno);
+		for(int i=0; i<uuidList.size(); i++) {
+			String uuid = uuidList.get(i).getUuid();
+			attachmapper.delete(uuid);
+		}
+		int result = mapper.delete(bno);
+		
+		for(int i=0; i<uuidList.size(); i++) {
+			try {
+				File file = new File("C:\\upload\\" + uuidList.get(i).getUploadPath() + "\\" +
+								uuidList.get(i).getUuid() + "_" + uuidList.get(i).getFileName());
+				
+				log.info("삭제 시도 경로: " + file.getAbsolutePath());
+				log.info("exists(): " + file.exists());
+				
+				file.delete();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result == 1;
 	}
 	
 	@Override

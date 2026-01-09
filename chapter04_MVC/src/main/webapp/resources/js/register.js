@@ -54,6 +54,22 @@ function register() {
 	  return;
 	}
 	
+	// 업로드된 파일의 정보를 가져와서 담기
+	let str = ``;
+	document.querySelectorAll(`.uploadResult ul li`).forEach((li, index) => {
+		let path = li.getAttribute('path');
+		let uuid = li.getAttribute('uuid');
+		let fileName = li.getAttribute('fileName');
+		
+		str += `<input type="hidden" name="attachList[${index}].uploadPath" value="${path}"/>`;
+		str += `<input type="hidden" name="attachList[${index}].uuid" value="${uuid}"/>`;
+		str += `<input type="hidden" name="attachList[${index}].fileName" value="${fileName}"/>`;
+	});
+	
+	// 기존에 form에 작성한 value가 날아갈 수 있음
+//	f.innerHTML += str;
+	f.insertAdjacentHTML('beforeend', str);
+	
 	f.action = '/board/register';
 	f.submit();
 }

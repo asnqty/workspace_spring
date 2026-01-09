@@ -19,4 +19,7 @@ public interface ReplyMapper {
 		
 	// 댓글 수정
 	public int update(ReplyVO rvo);
+	
+	// 게시글 삭제 전 해당 게시글의 댓글 전부 삭제
+	public int deleteAll(int bno);
 }

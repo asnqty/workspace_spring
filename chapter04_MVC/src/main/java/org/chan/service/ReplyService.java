@@ -20,4 +20,5 @@ public interface ReplyService {
 	
 	// 댓글 수정
 	public boolean modify(ReplyVO rvo);
+	
 }

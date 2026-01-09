@@ -1,6 +1,7 @@
 package org.chan.domain;
 
 import java.sql.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class BoardVO {
 	private Date regdate;
 	private Date updatedate;
 	private int replycnt;
+	private List<BoardAttachVO> attachList;
 }

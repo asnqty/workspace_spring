@@ -4,7 +4,8 @@
 
 <mapper namespace="org.chan.mapper.BoardMapper">
 	<!-- 전체 데이터 가져오기 -->
-	<select id="getList" parameterType="org.chan.domain.Criteria" resultType="org.chan.domain.BoardVO">
+	<select id="getList" parameterType="org.chan.domain.Criteria"
+		resultType="org.chan.domain.BoardVO">
 		<![CDATA[
 			SELECT bno, writer, title, regdate, replycnt
 			FROM
@@ -15,35 +16,44 @@
 			WHERE rn > (#{pageNum}-1) * #{amount}
 		]]>
 	</select>
-	
+
 	<!-- 전체 게시글 수 가져오기 -->
 	<select id="getTotal" resultType="int">
-		SELECT COUNT(bno) FROM tbl_board	
+		SELECT COUNT(bno) FROM
+		tbl_board
 	</select>
-	
+
 	<!-- 데이터 삽입 -->
 	<insert id="insert" parameterType="org.chan.domain.BoardVO">
-		INSERT INTO tbl_board VALUES (seq_board.nextval, #{title}, #{content}, #{writer}, sysdate, sysdate)
+		<selectKey keyProperty="bno" resultType="int" order="BEFORE">
+			SELECT seq_board.nextval FROM dual
+		</selectKey>
+		INSERT INTO tbl_board VALUES (#{bno}, #{title}, #{content},
+		#{writer}, sysdate, sysdate, 0)
 	</insert>
-	
+
 	<!-- 기본키로 데이터 가져오기 -->
-	<select id="read" parameterType="int" resultType="org.chan.domain.BoardVO">
+	<select id="read" parameterType="int"
+		resultType="org.chan.domain.BoardVO">
 		SELECT * FROM tbl_board WHERE bno=#{bno}
 	</select>
-	
+
 	<!-- 기본키로 데이터 삭제 -->
 	<delete id="delete" parameterType="int">
-		DELETE FROM tbl_board WHERE bno=#{bno}
+		DELETE FROM tbl_board WHERE
+		bno=#{bno}
 	</delete>
-	
+
 	<!-- 기본키로 제목, 내용, 작성자 변경 -->
 	<update id="update" parameterType="org.chan.domain.BoardVO">
-		UPDATE tbl_board SET title=#{title}, content=#{content}, writer=#{writer}, 
+		UPDATE tbl_board SET
+		title=#{title}, content=#{content}, writer=#{writer},
 		updatedate=sysdate WHERE bno=#{bno}
 	</update>
-	
+
 	<!-- 게시글에 달린 댓글의 갯수에 변화가 있을 때 replycnt를 변경 -->
 	<update id="updateReplyCnt">
-		UPDATE tbl_board SET replycnt = replycnt + #{amount} WHERE bno=#{bno}
+		UPDATE tbl_board SET replycnt = replycnt + #{amount}
+		WHERE bno=#{bno}
 	</update>
 </mapper>

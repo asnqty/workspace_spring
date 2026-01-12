@@ -44,6 +44,20 @@
 				이동</button>
 		</div>
 	</div>
+	
+	<%-- 파일 첨부 영역 --%>
+	<div class="file-container">
+		<div class="file-header">
+			<div class="file-title">
+				<a>파일 첨부</a>
+			</div>
+		</div>
+		<div class="file-body">
+			<div class="uploadResult">
+				<ul></ul>
+			</div>
+		</div>
+	</div>
 
 	<%-- reply 영역 --%>
 	<div class="panel-footer">
@@ -69,7 +83,7 @@
 			</ul>
 		</div>
 	</div>
-
+	
 	<%-- modal 영역 --%>
 	<div id="modal">
 		<div class="modal-content">

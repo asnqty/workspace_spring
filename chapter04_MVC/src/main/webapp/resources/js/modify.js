@@ -77,6 +77,22 @@ function modify() {
 	// 값 세팅
 	amountInput.value = storageData.amount;
 	
+	// 업로드된 파일의 정보를 가져와서 담기
+	let str = ``;
+	document.querySelectorAll(`.uploadResult ul li`).forEach((li, index) => {
+		let path = li.getAttribute('path');
+		let uuid = li.getAttribute('uuid');
+		let fileName = li.getAttribute('fileName');
+		
+		str += `<input type="hidden" name="attachList[${index}].uploadPath" value="${path}"/>`;
+		str += `<input type="hidden" name="attachList[${index}].uuid" value="${uuid}"/>`;
+		str += `<input type="hidden" name="attachList[${index}].fileName" value="${fileName}"/>`;
+	});
+	
+	// 기존에 form에 작성한 value가 날아갈 수 있음
+//	f.innerHTML += str;
+	f.insertAdjacentHTML('beforeend', str);
+	
 	f.action = '/board/modify';
 	f.submit();
 }
@@ -108,3 +124,95 @@ function remove(){
 		f.submit();
 	}
 }
+
+//파일 리스트 콘솔에 출력
+(function(){
+	fetch(`/board/getAttachList/${f.bno.value}`)
+		.then(response => response.json())
+		.then(data => {
+			showUploadFile(data);
+		})
+		.catch(err => console.log(err));
+})();
+
+//파일 업로드 전처리 과정 내용들 (검증)
+const regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+const MAX_SIZE = 5242880; // 5MB
+
+function checkExtension(fileName, fileSize){
+	if(fileSize >= MAX_SIZE){
+		alert("파일 사이즈 초과");
+		return;
+	}
+	if(regex.test(fileName)){
+		alert("해당 종류의 파일은 업로드할 수 없습니다.");
+		return;
+	}
+	return true;
+}
+
+// 파일을 비동기로 업로드 후 선택한 파일이 없는 상태로 초기화 하기 위한 과정
+// 비어있는 요소 복사해두기
+let uploadDiv = document.querySelector(".uploadDiv");
+// 하위 노드까지 복사
+let cloneObj = uploadDiv.firstElementChild.cloneNode(true);
+
+// 실제 파일 업로드
+document.querySelector('input[type="file"]').addEventListener('change', ()=>{
+	const inputFile = document.querySelector('input[type="file"]');
+	const files = inputFile.files;
+	const formData = new FormData();
+	
+	for(let i=0; i<files.length; i++){
+		
+		if(!checkExtension(files[i].name, files[i].size)){
+			return false;
+		}
+		
+		formData.append('uploadFile', files[i]);
+	}
+	
+	fetch(`/uploadAsyncAction`, {method : 'post', body : formData})
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+			
+			inputFile.value = '';
+			showUploadFile(data);
+		})
+		.catch(err => console.log(err));
+});
+
+//업로드 완료된 목록 보여주는 함수
+let uploadResult = document.querySelector('.uploadResult ul');
+function showUploadFile(uploadResultArr){
+	let str = ``;
+	uploadResultArr.forEach(file =>{
+		let fileCallPath = encodeURIComponent(file.uploadPath + "/" + file.uuid + "_" + file.fileName);
+		
+		str += `<li path="${file.uploadPath}" uuid="${file.uuid}" fileName="${file.fileName}">`;
+//		str += `<a href="/download?fileName=${fileCallPath}">`;
+		str += `${file.fileName}`;
+//		str += `</a>`;
+		str += `<span data-file="${fileCallPath}", data-uuid="${file.uuid}"> X </span>`;
+		str += `</li>`;
+	});
+	uploadResult.innerHTML = str;
+	spanAddEvent();
+}
+
+//위에서 생성된 X에 클릭이벤트 부여
+function spanAddEvent(){
+	document.querySelector('.uploadResult ul li span').addEventListener('click', e=>{
+		// 삭제할 파일의 경로를 저장
+		let removeStr = ``;
+		removeStr += `<input type="hidden" name="removeFile" value="${e.target.dataset.file}"/>`;
+		f.insertAdjacentHTML('beforeend', removeStr);
+		// 삭제할 파일의 uuid를 저장
+		let removeUuid = ``;
+		removeUuid += `<input type="hidden" name="removeUuid" value="${e.target.dataset.uuid}"/>`;
+		f.insertAdjacentHTML('beforeend', removeUuid);
+		// 삭제할 파일의 li(유저에게 보여주는 정보)를 삭제
+		e.target.closest('li').remove();
+	});
+};

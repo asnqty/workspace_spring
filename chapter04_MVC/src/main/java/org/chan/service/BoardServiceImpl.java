@@ -99,6 +99,33 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public boolean modify(BoardVO bvo) {
 		log.info("modify..." + bvo);
+		
+		// 새로 첨부한 파일만 DB에 추가
+		List<BoardAttachVO> list = bvo.getAttachList();
+		int bno = bvo.getBno();
+		
+		// 첨부 파일 등록
+		if(list != null && list.size() > 0) {
+			for(int i=0; i<list.size(); i++) {
+				BoardAttachVO attachvo = list.get(i);
+				attachvo.setBno(bno);
+				attachmapper.delete(attachvo.getUuid());
+				attachmapper.insert(attachvo);
+			}
+		}
+		
 		return mapper.update(bvo) == 1;
 	}	
+	
+	@Override
+	public List<BoardAttachVO> getAttachList(int bno) {
+		log.info("getAttachList..." + bno);
+		return attachmapper.findByBno(bno);
+	}
+	
+	// 첨부 파일 삭제
+	@Override
+	public void removeFile(String uuid) {
+		attachmapper.delete(uuid);
+	}
 }

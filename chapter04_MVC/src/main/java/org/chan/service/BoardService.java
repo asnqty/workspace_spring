@@ -2,6 +2,7 @@ package org.chan.service;
 
 import java.util.List;
 
+import org.chan.domain.BoardAttachVO;
 import org.chan.domain.BoardVO;
 import org.chan.domain.Criteria;
 
@@ -24,4 +25,10 @@ public interface BoardService {
 	
 	// 데이터 수정
 	public boolean modify(BoardVO bvo);
+	
+	// 첨부 파일 리스트
+	public List<BoardAttachVO> getAttachList(int bno);
+	
+	// 첨부 파일 삭제
+	public void removeFile(String uuid);
 }

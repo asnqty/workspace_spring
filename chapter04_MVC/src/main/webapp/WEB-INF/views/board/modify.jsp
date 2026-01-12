@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,8 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<jsp:include page="../layout/header.jsp"/>	
-	
+	<jsp:include page="../layout/header.jsp" />
+
 	<div class="page-header">
 		<h1>게시글 수정 & 삭제</h1>
 	</div>
@@ -26,25 +26,44 @@
 					</tr>
 					<tr>
 						<th>작성자</th>
-						<td><input type="text" name="writer" value="${bvo.writer }" readonly></td>
+						<td><input type="text" name="writer" value="${bvo.writer }"
+							readonly></td>
 					</tr>
 					<tr>
 						<th>내용</th>
-						<td>
-							<textarea rows="10" cols="76" name="content">${bvo.content }</textarea>
+						<td><textarea rows="10" cols="76" name="content">${bvo.content }</textarea>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</form>
+
+		<%-- 파일 첨부 영역 --%>
+		<div class="file-container">
+			<div class="file-header">
+				<div class="file-title">
+					<a>파일 첨부</a>
+				</div>
+			</div>
+			<div class="file-body">
+				<div class="uploadDiv">
+					<input type="file" name="uploadFile" multiple="multiple">
+				</div>
+				<div class="uploadResult">
+					<ul></ul>
+				</div>
+			</div>
+		</div>
+
 		<div class="panel-body-btns">
 			<button type="button" class="btn btn-sec" id="modifyBtn">수정</button>
 			<button type="button" class="btn btn-thi" id="removeBtn">삭제</button>
-			<button type="button" class="btn btn-fir" id="indexBtn">목록으로 이동</button>
+			<button type="button" class="btn btn-fir" id="indexBtn">목록으로
+				이동</button>
 		</div>
 	</div>
 
-	<jsp:include page="../layout/footer.jsp"/>
-	<script type="text/javascript" src="/resources/js/modify.js"></script>	
+	<jsp:include page="../layout/footer.jsp" />
+	<script type="text/javascript" src="/resources/js/modify.js"></script>
 </body>
 </html>

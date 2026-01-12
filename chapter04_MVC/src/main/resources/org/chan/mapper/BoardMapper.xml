@@ -19,8 +19,7 @@
 
 	<!-- 전체 게시글 수 가져오기 -->
 	<select id="getTotal" resultType="int">
-		SELECT COUNT(bno) FROM
-		tbl_board
+		SELECT COUNT(bno) FROM tbl_board
 	</select>
 
 	<!-- 데이터 삽입 -->

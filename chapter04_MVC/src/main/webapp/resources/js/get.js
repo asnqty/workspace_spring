@@ -267,3 +267,31 @@ function removeReply(){
 // {console.log(result)})
 
 // rs.get(21, function(result){console.log(result)});
+
+//--------------------------- 첨부 파일 관련 스크립트
+
+// 파일 리스트 콘솔에 출력
+(function(){
+	fetch(`/board/getAttachList/${f.bno.value}`)
+		.then(response => response.json())
+		.then(data => {
+			showUploadFile(data);
+		})
+		.catch(err => console.log(err));
+})();
+	
+//업로드 완료된 목록 보여주는 함수
+let uploadResult = document.querySelector('.uploadResult ul');
+function showUploadFile(uploadResultArr){
+	let str = ``;
+	uploadResultArr.forEach(file =>{
+		let fileCallPath = encodeURIComponent(file.uploadPath + "/" + file.uuid + "_" + file.fileName);
+		
+		str += `<li path="${file.uploadPath}" uuid="${file.uuid}" fileName="${file.fileName}">`;
+		str += `<a href="/download?fileName=${fileCallPath}">`;
+		str += `${file.fileName}`;
+		str += `</a>`;
+		str += `</li>`;
+	});
+	uploadResult.innerHTML = str;
+}

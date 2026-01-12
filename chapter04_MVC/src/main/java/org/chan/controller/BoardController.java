@@ -1,16 +1,26 @@
 package org.chan.controller;
 
+import java.io.File;
+import java.net.URLDecoder;
+import java.util.List;
+
+import org.chan.domain.BoardAttachVO;
 import org.chan.domain.BoardVO;
 import org.chan.domain.Criteria;
 import org.chan.domain.PageDTO;
 import org.chan.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.log4j.Log4j;
@@ -88,14 +98,39 @@ public class BoardController {
 	// 게시글 수정
 	@PostMapping("/modify")
 	public String modify(BoardVO bvo, RedirectAttributes rttr, @RequestParam("pageNum") int pageNum, 
-			@RequestParam("amount") int amount) {
+			@RequestParam("amount") int amount, @RequestParam(value = "removeFile", required = false) List<String> removeFiles,
+			@RequestParam(value = "removeUuid", required = false) List<String> removeUuid) {
 		log.info("modify..." + bvo);
 		log.info("pageNum... : " + pageNum);
 		log.info("amount... : " + amount);
 		rttr.addFlashAttribute("result", service.modify(bvo) ? "success" : "fail");
 		rttr.addAttribute("pageNum", pageNum);
 	    rttr.addAttribute("amount", amount);
-		return "redirect:/board/list";
+	    
+	    // 게시글 수정 시 삭제 했던 파일을 전부 삭제
+	    if(removeFiles != null) {
+	    	for(int i=0; i<removeFiles.size(); i++) {
+	    		File file;
+	    		
+	    		try {
+	    			file = new File("C:\\upload\\" + URLDecoder.decode(removeFiles.get(i), "utf-8"));
+	    			file.delete();
+	    		} catch (Exception e) {
+	    			e.printStackTrace();
+	    		}
+	    	}
+	    }
+	    
+	    // 게시글 수정 시 삭제했던 파일을 DB에 반영
+	    if(removeUuid != null) {
+	    	for(int i=0; i<removeUuid.size(); i++) {
+	    		service.removeFile(removeUuid.get(i));
+	    	}
+	    }
+	    
+	    // 삭제된 파일을 DB에서도 삭제
+	    
+	    return "redirect:/board/list";
 	}
 	
 	// 게시글 삭제
@@ -107,4 +142,12 @@ public class BoardController {
 	    rttr.addAttribute("amount", 10);
 		return "redirect:/board/list";
 	}
+	
+	// 첨부파일 리스트 가져오기
+	@ResponseBody
+	@GetMapping(value = "/getAttachList/{bno}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<BoardAttachVO>> getAttachList(@PathVariable("bno") int bno) {
+		return new ResponseEntity<List<BoardAttachVO>>(service.getAttachList(bno), HttpStatus.OK);
+	}
+	
 }

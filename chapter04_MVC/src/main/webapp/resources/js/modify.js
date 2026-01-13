@@ -90,7 +90,7 @@ function modify() {
 	});
 	
 	// 기존에 form에 작성한 value가 날아갈 수 있음
-//	f.innerHTML += str;
+// f.innerHTML += str;
 	f.insertAdjacentHTML('beforeend', str);
 	
 	f.action = '/board/modify';
@@ -125,7 +125,7 @@ function remove(){
 	}
 }
 
-//파일 리스트 콘솔에 출력
+// 파일 리스트 콘솔에 출력
 (function(){
 	fetch(`/board/getAttachList/${f.bno.value}`)
 		.then(response => response.json())
@@ -135,7 +135,7 @@ function remove(){
 		.catch(err => console.log(err));
 })();
 
-//파일 업로드 전처리 과정 내용들 (검증)
+// 파일 업로드 전처리 과정 내용들 (검증)
 const regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
 const MAX_SIZE = 5242880; // 5MB
 
@@ -183,7 +183,7 @@ document.querySelector('input[type="file"]').addEventListener('change', ()=>{
 		.catch(err => console.log(err));
 });
 
-//업로드 완료된 목록 보여주는 함수
+// 업로드 완료된 목록 보여주는 함수
 let uploadResult = document.querySelector('.uploadResult ul');
 function showUploadFile(uploadResultArr){
 	let str = ``;
@@ -191,9 +191,9 @@ function showUploadFile(uploadResultArr){
 		let fileCallPath = encodeURIComponent(file.uploadPath + "/" + file.uuid + "_" + file.fileName);
 		
 		str += `<li path="${file.uploadPath}" uuid="${file.uuid}" fileName="${file.fileName}">`;
-//		str += `<a href="/download?fileName=${fileCallPath}">`;
+// str += `<a href="/download?fileName=${fileCallPath}">`;
 		str += `${file.fileName}`;
-//		str += `</a>`;
+// str += `</a>`;
 		str += `<span data-file="${fileCallPath}", data-uuid="${file.uuid}"> X </span>`;
 		str += `</li>`;
 	});
@@ -201,18 +201,20 @@ function showUploadFile(uploadResultArr){
 	spanAddEvent();
 }
 
-//위에서 생성된 X에 클릭이벤트 부여
+// 위에서 생성된 X에 클릭이벤트 부여
 function spanAddEvent(){
-	document.querySelector('.uploadResult ul li span').addEventListener('click', e=>{
-		// 삭제할 파일의 경로를 저장
-		let removeStr = ``;
-		removeStr += `<input type="hidden" name="removeFile" value="${e.target.dataset.file}"/>`;
-		f.insertAdjacentHTML('beforeend', removeStr);
-		// 삭제할 파일의 uuid를 저장
-		let removeUuid = ``;
-		removeUuid += `<input type="hidden" name="removeUuid" value="${e.target.dataset.uuid}"/>`;
-		f.insertAdjacentHTML('beforeend', removeUuid);
-		// 삭제할 파일의 li(유저에게 보여주는 정보)를 삭제
-		e.target.closest('li').remove();
-	});
+	document.querySelectorAll('.uploadResult ul li span').forEach(spanEle=>{
+		spanEle.addEventListener('click', e=>{
+			// 삭제할 파일의 경로를 저장
+			let removeStr = ``;
+			removeStr += `<input type="hidden" name="removeFile" value="${e.target.dataset.file}"/>`;
+			f.insertAdjacentHTML('beforeend', removeStr);
+			// 삭제할 파일의 uuid를 저장
+			let removeUuid = ``;
+			removeUuid += `<input type="hidden" name="removeUuid" value="${e.target.dataset.uuid}"/>`;
+			f.insertAdjacentHTML('beforeend', removeUuid);
+			// 삭제할 파일의 li(유저에게 보여주는 정보)를 삭제
+			e.target.closest('li').remove();
+		});
+	})
 };

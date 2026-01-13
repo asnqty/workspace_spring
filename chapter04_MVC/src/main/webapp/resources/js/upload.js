@@ -81,10 +81,12 @@ function showUploadFile(uploadResultArr){
 // * headers : {'Content-Type' : 'text/plain'}
 // * api에서는 deleted 라는 문자열을 리턴할 예정
 function spanAddEvent(){
-	document.querySelector('.uploadResult ul li span').addEventListener('click', e=>{
-		fetch(`/deleteFile`, {method : 'post', body : e.target.dataset.file, headers : {'Content-Type' : 'text/plain'}})
+	document.querySelectorAll('.uploadResult ul li span').forEach(spanEle =>{
+		spanEle.addEventListener('click', e=>{
+			fetch(`/deleteFile`, {method : 'post', body : e.target.dataset.file, headers : {'Content-Type' : 'text/plain'}})
 			.then(res => res.text())
 			.then(result => {e.target.closest('li').remove();})
 			.catch(err => console.error(err));
-	});
+		});
+	})
 };

@@ -7,8 +7,9 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>admin.jsp</h1>
-	
-	<a href="/customLogout">Logout</a>
+	<h1>Logout Page</h1>
+	<form action="/customLogout" method="post">
+		<button>로그아웃</button>
+	</form>
 </body>
 </html>

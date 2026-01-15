@@ -10,6 +10,8 @@
 	<bean id="customLoginSuccess" class="org.chan.security.CustomLoginSuccessHandler"></bean>
 	<!-- 비밀번호를 인코딩 해주는 객체 -->
 	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+	<!-- customUser 객체 -->
+	<bean id="customUserDetailService" class="org.chan.security.CustomUserDetailService"></bean>
 	
 	<!-- HTTP 통신 보안 구성 요소 -->
 	<security:http auto-config="true">
@@ -19,26 +21,29 @@
 		
 		<!-- 기본 로그인 페이지 대신 custom한 로그인 페이지로 이동시킴 로그인에 성공시 Handler가 가로채서 그 이후를 처리하게 만듬 -->
 		<!-- <security:form-login/> -->
-		<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
+		<security:form-login login-page="/customLogin"/>
 		
 		<!-- 로그 아웃 url 지정, 로그 아웃시 세션 삭제 여부 -->
-		<security:logout logout-url="/customLogout" invalidate-session="true"/>
+		<security:logout logout-url="/customLogout" invalidate-session="true" delete-cookies="remember-me"/>
 		
-		<!-- 로그인 실패 시 기본 적으로 실행되는 과정 되신 Handler가 가로채서 그 이후 처리를 하게 만듬 -->
+		<!-- 로그인 후 권한이 없을 때 기본 적으로 실행되는 에러 페이지 이동 대신 Handler가 가로채서 그 이후 처리를 하게 만듬 -->
 		<!-- <security:access-denied-handler error-page="/accessError"/> -->
 		<security:access-denied-handler ref="customAccessDenied"/>
 		
 		<!-- csrf를 해당 프로젝트에서 비활성화 -->
 		<security:csrf disabled="true"/>
+		
+		<!-- 아이디 저장을 위한 remember-me. 속성 : token의 지속시간(초단위) -->
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
 	</security:http>
 	
 	<!-- 사용자 인증 관리 -->
 	<security:authentication-manager>
-		<security:authentication-provider>
-			<!-- data-source 커넥션 풀을 관리하는 객체 -->
+		<security:authentication-provider user-service-ref="customUserDetailService">
+			<!-- data-source 커넥션 풀을 관리하는 객체
 			<security:jdbc-user-service data-source-ref="dataSource" 
 			users-by-username-query="select userid, userpw, enabled from tbl_member where userid=?"
-			authorities-by-username-query="select userid, auth from tbl_member_auth where userid=?"/>
+			authorities-by-username-query="select userid, auth from tbl_member_auth where userid=?"/> -->
 			<security:password-encoder ref="bcryptPasswordEncoder"/>
 		</security:authentication-provider>
 	</security:authentication-manager>

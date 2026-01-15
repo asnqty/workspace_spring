@@ -145,7 +145,8 @@ function registerModalPage(){
 	regReplyModalStyle();
 	// 입력 내용 초기화 & 불러오기
 	inputReply.value = '';
-	inputReplyer.value = '';
+	inputReplyer.value = `${principal.username}`;
+	inputReplyer.readOnly = true;
 	
 	openModal();
 };
@@ -166,8 +167,6 @@ function regReplyModalStyle(){
 	// 댓글 수정 페이지에서 hide 한 등록 버튼의 hide 제거
 	addReplyBtn.classList.remove('hide');
 	
-	// 댓글 수정 페이지에서 작성자 input 창에 부여한 readonly 속성 제거 
-	inputReplyer.readOnly = false;
 };
 
 // 댓글 등록
@@ -194,8 +193,6 @@ function registerReply(){
 // 댓글 클릭 함수
 let rno;
 function modifyModalPage(t){
-	// 보여질 목록 수정
-	modReplyModalStyle();
 	
 	// 입력 내용 초기화 & 불러오기
 	rno = t.dataset.rno;
@@ -204,16 +201,23 @@ function modifyModalPage(t){
 		inputReply.value = result.reply;
 		inputReplyer.value = result.replyer;
 		inputReplydate.value = displayTime(result.replydate);
+		// 보여질 목록 수정
+		modReplyModalStyle();
+		
+		openModal();
 	});
 	
-	openModal();
 	
 }
 
 function modReplyModalStyle(){
-	// 댓글 달기에서 hide 된 수정, 삭제 버튼의 hide 제거
-	modifyReplyBtn.classList.remove('hide');
-	removeReplyBtn.classList.remove('hide');
+	// 일단 무조건 hide를 수정, 삭제 버튼에 달아 그리고 그 이후에 작성자와 로그인 된 아이디를 비교해서 같으면 보여줘
+	modifyReplyBtn.classList.add('hide');
+	removeReplyBtn.classList.add('hide');
+	if(principal.username === inputReplyer.value){
+		modifyReplyBtn.classList.remove('hide');
+		removeReplyBtn.classList.remove('hide');
+	}
 	addReplyBtn.classList.add('hide');
 	
 	// 댓글 달기에서 hide 된 댓글 등록 날짜의 hide 제거

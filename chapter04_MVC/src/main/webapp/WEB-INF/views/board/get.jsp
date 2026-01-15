@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://www.springframework.org/security/tags" prefix = "sec" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,9 +41,14 @@
 			</table>
 		</form>
 		<div class="panel-body-btns">
-			<button type="button" class="btn btn-sec" id="modifyBtn">수정</button>
-			<button type="button" class="btn btn-fir" id="indexBtn">목록으로
-				이동</button>
+			<!-- principal을 pinfo로 변수 지정 -->
+			<sec:authentication property="principal" var="pinfo"/>
+			<sec:authorize access="isAuthenticated()">
+				<c:if test="${pinfo.username eq bvo.writer }">
+					<button type="button" class="btn btn-sec" id="modifyBtn">수정</button>
+				</c:if>
+			</sec:authorize>
+			<button type="button" class="btn btn-fir" id="indexBtn">목록으로 이동</button>
 		</div>
 	</div>
 	
@@ -65,10 +72,11 @@
 			<div class="panel-footer-title">
 				<a href="mainPage">댓글</a>
 			</div>
-			<div class="panel-footer-register">
-				<button type="button" class="btn btn-sec" id="replyBtn">댓글
-					달기</button>
-			</div>
+			<sec:authorize access="isAuthenticated()">
+				<div class="panel-footer-register">
+					<button type="button" class="btn btn-sec" id="replyBtn">댓글 달기</button>
+				</div>
+			</sec:authorize>
 		</div>
 		<div class="panel-footer-body">
 			<ul class="chat">
@@ -88,7 +96,7 @@
 	<div id="modal">
 		<div class="modal-content">
 			<div class="modal-title">
-				<a>새 게시글 등록</a>
+				<a>새 댓글 등록</a>
 			</div>
 			<hr>
 			<div class="modal-body">

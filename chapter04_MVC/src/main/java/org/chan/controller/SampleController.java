@@ -1,5 +1,7 @@
 package org.chan.controller;
 
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,20 @@ public class SampleController {
 	@GetMapping("/admin")
 	public void doAdmin() {
 		log.info("do Admin...");
+	}
+	
+	// 어노테이션을 이용한 시큐리티 설정
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+	@GetMapping("/annoMember")
+	public void doMember2() {
+		log.info("로그인 멤버 어노테이션");
+	}
+	
+	// 조금 더 옛날 버전이라 표현식 사용 불가능, 권한 이름 나열만 가능
+	@Secured({"ROLE_ADMIN"})
+	@GetMapping("/annoAdmin")
+	public void doAdmin2() {
+		log.info("로그인 어드민 어노테이션");
 	}
 	
 }

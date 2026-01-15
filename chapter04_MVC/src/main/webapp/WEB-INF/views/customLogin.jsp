@@ -14,6 +14,7 @@
 	<form action="/login" method="post">
 		<div><input type="text" name="username"></div>
 		<div><input type="password" name="password"></div>
+		<div><input type="checkbox" name="remember-me">자동로그인</div>
 		<div><input type="submit" name="전송"></div>
 	</form>
 </body>
